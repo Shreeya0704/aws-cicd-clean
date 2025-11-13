@@ -6,6 +6,7 @@ pipeline {
     APP_NAME       = "aws-cicd-clean"
     AWS_REGION     = "ap-south-1"
     AWS_ACCOUNT_ID = "426811254002"
+    EC2_HOST       = "172.31.24.158"
     ECR_REPO       = "${APP_NAME}"
     IMAGE_TAG      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${env.BUILD_NUMBER}"
   }
