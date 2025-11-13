@@ -91,7 +91,7 @@ pipeline {
             docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
 
             # 6) say where it is
-            ip=\$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+            ip=\$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "localhost")
             echo "LIVE: http://\${ip}:3000"
 REMOTE
           """
