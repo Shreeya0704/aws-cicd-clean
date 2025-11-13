@@ -25,11 +25,11 @@ pipeline {
     stage('CI + Build + Push + Deploy (remote on EC2)') {
       steps {
         withCredentials([sshUserPrivateKey(credentialsId: "${SSH_CRED_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-          sh '''
+          sh """
             set -euxo pipefail
-            chmod 600 "$SSH_KEY"
+            chmod 600 "\$SSH_KEY"
 
-            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" "$EC2_USER @$EC2_HOST" bash -se <<REMOTE
+            ssh -o StrictHostKeyChecking=no -i "\$SSH_KEY" "${EC2_USER}@${EC2_HOST}" bash -se <<REMOTE
             set -euxo pipefail
 
             # ---- constants injected from Jenkins env (expanded here before SSH) ----
@@ -67,7 +67,7 @@ pipeline {
             fi
 
             # 2) unit tests (Node in Docker, runs on EC2 host)
-            docker run --rm -v "$PWD":/app -w /app node:18-alpine sh -lc "
+            docker run --rm -v "\$PWD":/app -w /app node:18-alpine sh -lc "
               set -eux
               npm ci
               npm test
@@ -87,13 +87,13 @@ pipeline {
             # 5) deploy
             docker rm -f "${APP_NAME}" || true
             docker run -d --name "${APP_NAME}" -p 3000:3000 "${IMAGE_TAG}"
-            docker ps --format "table {{.Names}}	{{.Image}}	{{.Status}}	{{.Ports}}"
+            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
 
             # 6) say where it is
-            ip=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
-            echo "LIVE: http://${ip}:3000"
+            ip=\$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+            echo "LIVE: http://\${ip}:3000"
 REMOTE
-          '''
+          """
         }
       }
     }
