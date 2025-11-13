@@ -3,7 +3,6 @@ pipeline {
   options { timestamps() }
 
   environment {
-    DOCKER_BIN    = "/usr/local/bin/docker"
     APP_NAME       = "aws-cicd-clean"
     AWS_REGION     = "ap-south-1"
     AWS_ACCOUNT_ID = "426811254002"
@@ -22,7 +21,7 @@ pipeline {
         sh '''
           set -euxo pipefail
           # run tests using a Node container, mounting the Jenkins workspace
-          ${DOCKER_BIN} run --rm -v "$PWD":/app -w /app node:18-alpine sh -lc "
+          docker run --rm -v "$PWD":/app -w /app node:18-alpine sh -lc "
             npm ci
             npm test
           "
@@ -41,7 +40,7 @@ pipeline {
 
           # login to ECR
           aws ecr get-login-password --region "${AWS_REGION}" | \
-            ${DOCKER_BIN} login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+            docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         '''
       }
     }
@@ -50,8 +49,8 @@ pipeline {
       steps {
         sh '''
           set -euxo pipefail
-          ${DOCKER_BIN} build -t "${IMAGE_TAG}" .
-          ${DOCKER_BIN} push "${IMAGE_TAG}"
+          docker build -t "${IMAGE_TAG}" .
+          docker push "${IMAGE_TAG}"
         '''
       }
     }
@@ -60,9 +59,9 @@ pipeline {
       steps {
         sh '''
           set -euxo pipefail
-          ${DOCKER_BIN} rm -f "${APP_NAME}" || true
-          ${DOCKER_BIN} run -d --name "${APP_NAME}" -p 3000:3000 "${IMAGE_TAG}"
-          ${DOCKER_BIN} ps --format "table {{.Names}}	{{.Image}}	{{.Status}}	{{.Ports}}"
+          docker rm -f "${APP_NAME}" || true
+          docker run -d --name "${APP_NAME}" -p 3000:3000 "${IMAGE_TAG}"
+          docker ps --format "table {{.Names}}	{{.Image}}	{{.Status}}	{{.Ports}}"
         '''
       }
     }
