@@ -12,7 +12,7 @@ pipeline {
     IMAGE_TAG      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${env.BUILD_NUMBER}"
 
     // already confirmed earlier:
-    EC2_HOST       = "172.31.24.158"
+    EC2_HOST       = "172.31.5.16"
     EC2_USER       = "ubuntu"
     SSH_CRED_ID    = "ec2-ssh"
   }
