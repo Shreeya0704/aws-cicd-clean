@@ -26,7 +26,7 @@ pipeline {
     stage('CI + Build + Push + Deploy (remote on EC2)') {
       steps {
         withCredentials([sshUserPrivateKey(credentialsId: "${SSH_CRED_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-          sh """
+          sh """#!/bin/bash
             set -euxo pipefail
             chmod 600 "\$SSH_KEY"
 
