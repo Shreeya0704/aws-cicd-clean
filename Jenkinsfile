@@ -9,6 +9,7 @@ pipeline {
     ECR_REPO       = "${APP_NAME}"
     BRANCH         = "main"
     GIT_URL        = "https://github.com/Shreeya0704/aws-cicd-clean.git"
+    IMAGE_TAG      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${env.BUILD_NUMBER}"
 
     // already confirmed earlier:
     EC2_HOST       = "172.31.24.158"
@@ -40,7 +41,7 @@ pipeline {
             BRANCH="${BRANCH}"
             GIT_URL="${GIT_URL}"
             BUILD_NUMBER="${BUILD_NUMBER}"
-            IMAGE_TAG="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${BUILD_NUMBER}"
+            IMAGE_TAG="${IMAGE_TAG}"
 
             # 0) ensure deps on EC2 (idempotent)
             if ! command -v docker >/dev/null 2>&1; then
