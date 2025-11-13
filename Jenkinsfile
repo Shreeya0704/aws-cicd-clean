@@ -27,11 +27,11 @@ pipeline {
       steps {
         withCredentials([sshUserPrivateKey(credentialsId: "${SSH_CRED_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
           sh """#!/bin/bash
-            set -euxo pipefail
+            set -exo pipefail
             chmod 600 "\$SSH_KEY"
 
             ssh -o StrictHostKeyChecking=no -i "\$SSH_KEY" "${EC2_USER}@${EC2_HOST}" bash -se <<REMOTE
-            set -euxo pipefail
+            set -exo pipefail
 
             # ---- constants injected from Jenkins env (expanded here before SSH) ----
             APP_NAME="${APP_NAME}"
