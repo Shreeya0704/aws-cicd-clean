@@ -6,7 +6,7 @@ pipeline {
         EC2_USER = 'ubuntu'
 
         // IMPORTANT: put your EC2 PUBLIC IPv4 address here (NOT 172.x.x.x)
-        EC2_HOST = '172.31.5.16'
+        EC2_HOST = '52.66.82.191'
     }
 
     stages {
