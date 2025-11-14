@@ -32,5 +32,28 @@ ssh -i "%KEY%" -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "chmod +x /home
 '''
             }
         }
+    post {
+        success {
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                to: "shreezzz0704@gmail.com",
+                body: """Build ${env.JOB_NAME} #${env.BUILD_NUMBER} succeeded.
+
+Console output: ${env.BUILD_URL}
+""",
+                mimeType: 'text/plain'
+            )
+        }
+        failure {
+            emailext(
+                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                to: "shreezzz0704@gmail.com",
+                body: """Build ${env.JOB_NAME} #${env.BUILD_NUMBER} FAILED.
+
+Console output: ${env.BUILD_URL}
+""",
+                mimeType: 'text/plain'
+            )
+        }
     }
 }
