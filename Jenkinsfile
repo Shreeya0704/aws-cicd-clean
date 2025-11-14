@@ -39,26 +39,30 @@ ssh -i "%KEY%" -o StrictHostKeyChecking=no ubuntu@%EC2_HOST% "chmod +x /home/ubu
 
     post {
         success {
-            emailext(
-                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                to: "shreezzz0704@gmail.com",
-                body: """Build ${env.JOB_NAME} #${env.BUILD_NUMBER} succeeded.
+            mail to: 'shreezzz0704@gmail.com',
+                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: """Hi Shreeya,
 
-Console output: ${env.BUILD_URL}
-""",
-                mimeType: 'text/plain'
-            )
+The Jenkins pipeline for job ${env.JOB_NAME} (build #${env.BUILD_NUMBER}) completed SUCCESSFULLY.
+
+App is deployed on EC2 and Docker container is running.
+
+Console log: ${env.BUILD_URL}
+
+– Jenkins
+"""
         }
         failure {
-            emailext(
-                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                to: "shreezzz0704@gmail.com",
-                body: """Build ${env.JOB_NAME} #${env.BUILD_NUMBER} FAILED.
+            mail to: 'shreezzz0704@gmail.com',
+                 subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: """Hi Shreeya,
 
-Console output: ${env.BUILD_URL}
-""",
-                mimeType: 'text/plain'
-            )
+The Jenkins pipeline for job ${env.JOB_NAME} (build #${env.BUILD_NUMBER}) FAILED.
+
+Please check the console log: ${env.BUILD_URL}
+
+– Jenkins
+"""
         }
     }
 }
