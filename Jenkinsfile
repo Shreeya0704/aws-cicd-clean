@@ -2,11 +2,15 @@ pipeline {
     agent any
 
     environment {
-        // Your EC2 Linux user
-        EC2_USER = 'ubuntu'
+        APP_NAME       = 'aws-cicd-clean'
+        AWS_REGION     = 'ap-south-1'
+        AWS_ACCOUNT_ID = '426811254002'
+        ECR_REPO       = 'aws-cicd-clean'
+        EC2_HOST       = '52.66.82.191'   // your EC2 public IP
+    }
 
-        // IMPORTANT: put your EC2 PUBLIC IPv4 address here (NOT 172.x.x.x)
-        EC2_HOST = '52.66.82.191'
+    options {
+        timestamps()
     }
 
     stages {
@@ -16,22 +20,23 @@ pipeline {
             }
         }
 
-        stage('CI + Build + Push + Deploy (remote on EC2)') {
+        stage('CI + Build + Push + Deploy (remote on EC2))') {
             steps {
                 bat '''
 echo ===== Starting remote CI/CD on %EC2_HOST% =====
 
-rem UPDATE THIS PATH TO YOUR REAL .PEM KEY FILE
+rem Path to your SSH key on the Jenkins Windows host
 set KEY=C:/Users/VShreeya/Downloads/jenkins-ec2.pem
-
 echo Using key at %KEY%
 
-scp -i "%KEY%" -o StrictHostKeyChecking=no deploy-remote.sh %EC2_USER%@%EC2_HOST%:/home/%EC2_USER%/deploy-remote.sh
+scp -i "%KEY%" -o StrictHostKeyChecking=no deploy-remote.sh ubuntu@%EC2_HOST%:/home/ubuntu/deploy-remote.sh
 
-ssh -i "%KEY%" -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "chmod +x /home/%EC2_USER%/deploy-remote.sh && /home/%EC2_USER%/deploy-remote.sh"
+ssh -i "%KEY%" -o StrictHostKeyChecking=no ubuntu@%EC2_HOST% "chmod +x /home/ubuntu/deploy-remote.sh && /home/ubuntu/deploy-remote.sh"
 '''
             }
         }
+    }
+
     post {
         success {
             emailext(
